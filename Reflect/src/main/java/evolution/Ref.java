@@ -34,10 +34,21 @@ public class Ref {
 		}
 	}
 
-	public static Object defaultPrimitiveObject(Class<?> clazz) {
-		// TODO Add more criteria.
-		if (clazz == int.class || clazz == Integer.class) {
+	public static Object defaultBasicObject(Class<?> clazz) {
+		if (clazz == boolean.class || clazz == Boolean.class) {
+			return false;
+		} else if (clazz == byte.class || clazz == Byte.class) {
+			return new Byte(0 + "");
+		} else if (clazz == short.class || clazz == Short.class) {
+			return new Short(0 + "");
+		} else if (clazz == char.class) {
+			return ' ';
+		} else if (clazz == int.class || clazz == Integer.class) {
 			return 0;
+		} else if (clazz == long.class || clazz == Long.class) {
+			return 0l;
+		} else if (clazz == float.class || clazz == Float.class) {
+			return 0f;
 		} else if (clazz == double.class || clazz == Double.class) {
 			return 0d;
 		} else if (clazz == String.class) {
@@ -48,12 +59,12 @@ public class Ref {
 		return null;
 	}
 
-	public static Object defaultPrimitiveObject(Field field) {
-		return defaultPrimitiveObject(field.getType());
+	public static Object defaultBasicObject(Field field) {
+		return defaultBasicObject(field.getType());
 	}
 
-	public static Object defaultPrimitiveObject(Object object) {
-		return defaultPrimitiveObject(object.getClass());
+	public static Object defaultBasicObject(Object object) {
+		return defaultBasicObject(object.getClass());
 	}
 
 	public static Object defaultObject(Class<?> clazz) {
@@ -77,14 +88,14 @@ public class Ref {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static Object defaultObject(Object object) {
 		try {
-			if (isPrimitive(object)) {
-				return defaultPrimitiveObject(object);
+			if (isBasic(object)) {
+				return defaultBasicObject(object);
 			}
 			Field[] fields = object.getClass().getDeclaredFields();
 			for (Field field : fields) {
 				field.setAccessible(true);
-				if (isPrimitive(field)) {
-					field.set(object, defaultPrimitiveObject(field));
+				if (isBasic(field)) {
+					field.set(object, defaultBasicObject(field));
 				} else if (isList(field)) {
 					List list = new LinkedList();
 					list.add(defaultObject(genericClass(field, 0)));
@@ -123,9 +134,13 @@ public class Ref {
 		return (Class<?>) actualTypeArguments(field)[i];
 	}
 
-	public static Boolean isPrimitive(Class<?> clazz) {
-		// TODO Add more criteria.
-		if (clazz == int.class || clazz == Integer.class
+	public static Boolean isBasic(Class<?> clazz) {
+		if (clazz == boolean.class || clazz == Boolean.class
+				|| clazz == byte.class || clazz == Byte.class
+				|| clazz == short.class || clazz == Short.class
+				|| clazz == int.class || clazz == Integer.class
+				|| clazz == long.class || clazz == Long.class
+				|| clazz == float.class || clazz == Float.class
 				|| clazz == double.class || clazz == Double.class
 				|| clazz == String.class
 				|| clazz == Date.class) {
@@ -134,12 +149,12 @@ public class Ref {
 		return false;
 	}
 
-	public static Boolean isPrimitive(Field field) {
-		return isPrimitive(field.getType());
+	public static Boolean isBasic(Field field) {
+		return isBasic(field.getType());
 	}
 
-	public static Boolean isPrimitive(Object object) {
-		return isPrimitive(object.getClass());
+	public static Boolean isBasic(Object object) {
+		return isBasic(object.getClass());
 	}
 
 	public static Boolean isList(Class<?> clazz) {
