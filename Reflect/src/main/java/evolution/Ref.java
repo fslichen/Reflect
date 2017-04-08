@@ -10,6 +10,18 @@ import java.util.List;
 import java.util.Map;
 
 public class Ref {
+	public static String simpleClassName(Class<?> clazz) {
+		return clazz.getSimpleName();
+	}
+	
+	public static String simpleClassName(Object object) {
+		return simpleClassName(object.getClass());
+	}
+	
+	public static String simpleClassName(Field field) {
+		return simpleClassName(field.getType());
+	}
+	
 	public static Boolean isMap(Class<?> clazz) {
 		return clazz == Map.class;
 	}
