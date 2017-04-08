@@ -154,8 +154,7 @@ public class Ref {
 				|| clazz == long.class || clazz == Long.class
 				|| clazz == float.class || clazz == Float.class
 				|| clazz == double.class || clazz == Double.class
-				|| clazz == String.class
-				|| clazz == Date.class) {
+				|| clazz == String.class || clazz == Date.class) {
 			return true;
 		}
 		return false;
