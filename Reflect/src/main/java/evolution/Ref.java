@@ -80,52 +80,48 @@ public class Ref {
 	public static Object defaultBasicObject(Object object) {
 		return defaultBasicObject(object.getClass());
 	}
-
-	public static Object defaultObject(Class<?> clazz) {
-		try {
-			return defaultObject(clazz.newInstance());
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
 	
 	public static Object defaultObject(Field field) {
-		try {
-			return defaultObject(field.getType().newInstance());
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
+		return defaultObject(field.getType());
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static Object defaultObject(Object object) {
+		return defaultObject(object.getClass());
+	}
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public static Object defaultObject(Class<?> clazz) {
 		try {
-			if (isBasic(object)) {
-				return defaultBasicObject(object);
-			}
-			Field[] fields = object.getClass().getDeclaredFields();
-			for (Field field : fields) {
-				field.setAccessible(true);
-				if (isBasic(field)) {
-					field.set(object, defaultBasicObject(field));
-				} else if (isList(field)) {
-					List list = new LinkedList();
-					list.add(defaultObject(genericClass(field, 0)));
-					field.set(object, list);
-				} else if (isMap(field)) {
-					Map map = new LinkedHashMap();
-					List<Class<?>> genericClasses = genericClasses(field);
-					map.put(defaultObject(genericClasses.get(0)), defaultObject(genericClasses.get(1)));
-					field.set(object, map);
-				} else {
-					field.set(object, defaultObject(field));
+			if (isBasic(clazz)) {
+				return defaultBasicObject(clazz);
+			} else if (clazz == List.class) {// Unable to get the generic type due to type erasure.
+				return new LinkedList();
+			} else if (clazz == Map.class) {
+				return new LinkedHashMap<>();
+			} else {// POJO
+				Object object = clazz.newInstance();
+				Field[] fields = clazz.getDeclaredFields();
+				for (Field field : fields) {
+					field.setAccessible(true);
+					if (isBasic(field)) {
+						field.set(object, defaultBasicObject(field));
+					} else if (isList(field)) {
+						List list = new LinkedList();
+						list.add(defaultObject(genericClass(field, 0)));
+						field.set(object, list);
+					} else if (isMap(field)) {
+						Map map = new LinkedHashMap();
+						List<Class<?>> genericClasses = genericClasses(field);
+						map.put(defaultObject(genericClasses.get(0)), defaultObject(genericClasses.get(1)));
+						field.set(object, map);
+					} else {
+						field.set(object, defaultObject(field));
+					}
 				}
+				return object;
 			}
-			return object;
 		} catch (Exception e) {
-			System.out.println(object + " is invalid.");
+			e.printStackTrace();
 			return null;
 		}
 	}
