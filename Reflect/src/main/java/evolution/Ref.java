@@ -1,6 +1,7 @@
 package evolution;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Date;
@@ -128,18 +129,41 @@ public class Ref {
 		}
 	}
 
+	// Get the generic class i of the return type.
+	public static Class<?> genericClass(Method method, int i) {
+		return (Class<?>) actualTypeArguments(method, -1, true)[i];
+	}
+	
+	// Get the generic class j of the parameter type i.
+	public static Class<?> genericClass(Method method, int i, int j) {
+		return (Class<?>) actualTypeArguments(method, i, false)[j];
+	}
+	
+	public static Type[] actualTypeArguments(Method method, int i, boolean isReturnType) {
+		ParameterizedType parameterizedType;
+		if (isReturnType) {
+			parameterizedType = (ParameterizedType) method.getAnnotatedReturnType().getType();
+		} else {
+			parameterizedType = (ParameterizedType) method.getAnnotatedParameterTypes()[i].getType();
+		}
+		return parameterizedType.getActualTypeArguments();
+	}
+	
 	public static Type[] actualTypeArguments(Field field) {
 		ParameterizedType parameterizedType = (ParameterizedType) field.getGenericType();
 		return parameterizedType.getActualTypeArguments();
 	}
 	
-	public static List<Class<?>> genericClasses(Field field) {
+	public static List<Class<?>> genericClasses(Type[] actualTypeArguments) {
 		List<Class<?>> genericClasses = new LinkedList<>();
-		Type[] types = actualTypeArguments(field);
-		for (Type type : types) {
+		for (Type type : actualTypeArguments) {
 			genericClasses.add((Class<?>) type);
 		}
 		return genericClasses;
+	}
+	
+	public static List<Class<?>> genericClasses(Field field) {
+		return genericClasses(actualTypeArguments(field));
 	}
 	
 	public static Class<?> genericClass(Field field, int i) {
