@@ -1,5 +1,6 @@
 package evolution;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -129,6 +130,20 @@ public class Ref {
 		}
 	}
 
+	public static Class<?> genericClass(Method method, Class<?> annotationClass, int k) {
+		Annotation[][] as = method.getParameterAnnotations();
+		int m = as.length;
+		for (int i = 0; i < m; i++) {
+			int n = as[i].length;
+			for (int j = 0; j < n; j++) {
+				if (as[i][0].annotationType() == annotationClass) {
+					return genericClass(method, i, k);
+				}
+			}
+		}
+		return null;
+	}
+	
 	// Get the generic class i of the return type.
 	public static Class<?> genericClass(Method method, int i) {
 		return (Class<?>) actualTypeArguments(method, -1, true)[i];
