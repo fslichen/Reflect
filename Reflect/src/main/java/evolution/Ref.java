@@ -5,11 +5,14 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 public class Ref {
 	public static String simpleClassName(Class<?> clazz) {
@@ -25,7 +28,7 @@ public class Ref {
 	}
 	
 	public static Boolean isMap(Class<?> clazz) {
-		return clazz == Map.class;
+		return clazz == Map.class || clazz == LinkedHashMap.class || clazz == HashMap.class || clazz == TreeMap.class;
 	}
 	
 	public static Boolean isMap(Object object) {
@@ -204,7 +207,7 @@ public class Ref {
 	}
 
 	public static Boolean isList(Class<?> clazz) {
-		return clazz == List.class;
+		return clazz == List.class || clazz == ArrayList.class || clazz == LinkedList.class;
 	}
 
 	public static Boolean isList(Field field) {
