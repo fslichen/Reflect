@@ -15,6 +15,18 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public class Ref {
+	public static Boolean isString(Class<?> clazz) {
+		return clazz == String.class;
+	}
+	
+	public static Boolean isString(Field field) {
+		return isString(field.getType());
+	}
+	
+	public static Boolean isString(Object object) {
+		return isString(object.getClass());
+	}
+	
 	public static String simpleClassName(Class<?> clazz) {
 		return clazz.getSimpleName();
 	}
