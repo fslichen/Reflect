@@ -156,6 +156,7 @@ public class Ref {
 	}
 	
 	// Get the generic class i of the return type.
+	// Set the input parameter index as -1 because it returns the class of the return type.
 	public static Class<?> genericClass(Method method, int i) {
 		return (Class<?>) actualTypeArguments(method, -1, true)[i];
 	}
